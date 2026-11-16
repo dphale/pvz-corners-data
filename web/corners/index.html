@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Los Angeles County Pedestrian and Bicycle Safety Data</title>
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="style.css?v=pvz-palette-2">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <header class="page-header">
+        <h1>Los Angeles County Pedestrian and Bicycle Safety Data</h1>
+        <p class="page-subtitle">Pedestrian and Bicycle Fatalities and Serious Injuries (FSI) 2015-2026P - select cities</p>
+        <div class="filters">
+          <label class="mode-toggle" id="rate-mode-label" data-testid="rate-mode-label" hidden>
+            <input type="checkbox" id="rate-mode">
+            Show rates per 100,000
+          </label>
+          <div class="filter-field" id="age-group-field">
+            <span class="filter-label" id="age-group-label">Age group</span>
+            <div
+              class="age-group-chips"
+              id="age-group-select"
+              data-testid="age-group-select"
+              role="group"
+              aria-labelledby="age-group-label"
+            ></div>
+          </div>
+          <div class="filter-row">
+            <div class="filter-field">
+              <span class="filter-label" id="mode-label">Mode</span>
+              <div class="segmented" id="mode-select" data-testid="mode-select" role="group" aria-labelledby="mode-label">
+                <button type="button" class="segment is-selected" data-value="all" aria-pressed="true">All</button>
+                <button type="button" class="segment" data-value="pedestrian" aria-pressed="false" aria-label="Pedestrian" title="Pedestrian">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9 7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/>
+                  </svg>
+                </button>
+                <button type="button" class="segment" data-value="bicyclist" aria-pressed="false" aria-label="Bicyclist" title="Bicyclist">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" d="M15.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM5 12c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5S3.1 13.5 5 13.5s3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5zm5.8-10 2.4-2.4.8.8c1.3 1.3 3 2.1 5.1 2.1V9c-1.5 0-2.7-.6-3.6-1.5l-1.9-1.9c-.5-.4-1-.6-1.6-.6s-1.1.2-1.4.6L7.8 8.4c-.4.4-.6.9-.6 1.4 0 .6.2 1.1.6 1.4L11 14v5h2v-6.2l-2.2-2.3zM19 12c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5s1.6-3.5 3.5-3.5 3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="filter-field">
+              <span class="filter-label" id="severity-label">Severity</span>
+              <div class="segmented" id="severity-select" data-testid="severity-select" role="group" aria-labelledby="severity-label">
+                <button type="button" class="segment is-selected" data-value="" aria-pressed="true">All</button>
+                <button type="button" class="segment" data-value="killed" aria-pressed="false">Fatality</button>
+                <button type="button" class="segment" data-value="serious" aria-pressed="false">Serious Injury</button>
+              </div>
+            </div>
+            <div class="filter-field" id="table-measure-field" data-testid="table-measure-field">
+              <span class="filter-label" id="table-measure-label">Totals/Rates</span>
+              <div class="segmented" id="table-measure" data-testid="table-measure" role="group" aria-labelledby="table-measure-label">
+                <button type="button" class="segment is-selected" data-value="totals" aria-pressed="true">Totals</button>
+                <button type="button" class="segment" data-value="rates" aria-pressed="false">Rates per 100,000</button>
+              </div>
+            </div>
+          </div>
+          <div class="filter-field" id="painted-crosswalk-field">
+            <span class="filter-label" id="painted-crosswalk-label">Map safety zones</span>
+            <div class="segmented" id="painted-crosswalk-select" data-testid="painted-crosswalk-select" role="group" aria-labelledby="painted-crosswalk-label" style="display: inline-flex; width: max-content; max-width: 100%; align-self: flex-start">
+              <button type="button" class="segment" data-value="pvz" aria-pressed="false" hidden style="flex: 0 0 auto">PVZ Crosswalks</button>
+              <button type="button" class="segment" data-value="hin" aria-pressed="false" style="flex: 0 0 auto">HIN (2024)</button>
+              <button type="button" class="segment" data-value="corridors" aria-pressed="false" style="flex: 0 0 auto">Safety Corridors (2024)</button>
+              <button type="button" class="segment" data-value="schools" aria-pressed="false" style="flex: 0 0 auto">Schools</button>
+              <button type="button" class="segment" data-value="parks" aria-pressed="false" hidden style="flex: 0 0 auto">Parks</button>
+              <button type="button" class="segment" data-value="mobility" aria-pressed="false" hidden style="flex: 0 0 auto">Mobility Plan 2035</button>
+            </div>
+          </div>
+          <div class="filter-field" id="geography-field" data-testid="geography-field" hidden>
+            <span class="filter-label" id="geography-label">View</span>
+            <div class="segmented" id="geography-select" data-testid="geography-select" role="group" aria-labelledby="geography-label">
+              <button type="button" class="segment" data-value="street" aria-pressed="false">Street</button>
+              <button type="button" class="segment is-selected" data-value="district" aria-pressed="true">District</button>
+            </div>
+          </div>
+          <form id="street-search" class="street-search" data-testid="street-search" hidden>
+            <label>
+              Street
+              <input
+                id="street-search-input"
+                data-testid="street-search-input"
+                type="text"
+                list="street-suggestions"
+                autocomplete="off"
+              >
+            </label>
+            <datalist id="street-suggestions" data-testid="street-suggestions"></datalist>
+            <button type="submit" data-testid="street-search-submit">Search street</button>
+          </form>
+        </div>
+      </header>
+      <section aria-labelledby="sidebar-table-heading">
+        <div class="sidebar-table-header" id="sidebar-table-header">
+          <h2 id="sidebar-table-heading" class="visually-hidden">Place and year table</h2>
+        </div>
+        <div id="school-radius-summary" data-testid="school-radius-summary" hidden>
+          <p id="school-radius-summary-text"></p>
+          <p id="school-radius-school-note" data-testid="school-radius-school-note" hidden></p>
+          <ol id="school-radius-school-list" data-testid="school-radius-school-list" hidden></ol>
+        </div>
+        <div id="park-radius-summary" data-testid="park-radius-summary" hidden>
+          <p id="park-radius-summary-text" hidden></p>
+          <p id="park-radius-park-note" data-testid="park-radius-park-note" hidden></p>
+          <ol id="park-radius-park-list" data-testid="park-radius-park-list" hidden></ol>
+        </div>
+        <div class="place-row-actions" id="table-actions" data-testid="place-row-actions">
+          <div class="place-row-actions-grid">
+            <div class="place-group" id="city-of-la-group">
+              <span class="filter-label place-group-label" id="city-of-la-label">City of Los Angeles</span>
+              <div class="place-group-rule" aria-hidden="true"></div>
+              <div class="place-group-controls">
+                <button type="button" id="select-all-districts" class="place-action">Select all</button>
+                <button type="button" id="unselect-all-districts" class="place-action" disabled>Unselect all</button>
+              </div>
+            </div>
+            <div class="place-group" id="county-of-la-group">
+              <span class="filter-label place-group-label" id="county-of-la-label">Los Angeles County</span>
+              <div class="place-group-rule" aria-hidden="true"></div>
+              <div class="place-group-controls">
+                <form id="city-row-form" class="city-row-form" data-testid="city-row-form">
+                  <input
+                    id="city-row-input"
+                    data-testid="city-row-input"
+                    type="text"
+                    list="city-suggestions"
+                    autocomplete="off"
+                    aria-label="City"
+                    placeholder="City name"
+                  >
+                  <datalist id="city-suggestions" data-testid="city-suggestions"></datalist>
+                  <button type="submit" class="place-action" data-testid="city-row-submit">Add city</button>
+                </form>
+                <button type="button" id="add-all-cities" class="place-action" data-testid="add-all-cities">Add all</button>
+                <button type="button" id="show-all-districts" class="place-action" data-testid="clear-all-cities" disabled>Clear all</button>
+              </div>
+            </div>
+            <button type="button" id="reset-selection" class="place-action" data-testid="reset-selection">Reset</button>
+          </div>
+          <p class="table-select-hint">Click a place or a year to select it. Click again to clear that selection.</p>
+        </div>
+        <div class="selected-places-row" id="selected-places-row" hidden>
+          <p id="selected-total"></p>
+        </div>
+        <div id="sidebar-table"></div>
+        <div id="rate-year-section" hidden>
+          <div id="rate-year-table" data-testid="rate-year-table"></div>
+        </div>
+      </section>
+      <section class="sources" aria-labelledby="sources-heading" data-testid="sources">
+        <h2 id="sources-heading">Sources</h2>
+        <ul class="sources-list">
+          <li data-source="TIMS/SWITRS data">
+            <a
+              href="https://tims.berkeley.edu/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >TIMS/SWITRS data</a>
+            — 2015–2024 are final TIMS/SWITRS data. 2025 and 2026 are provisional and can change (TIMS, 28 September 2026).
+          </li>
+          <li data-source="LA City Council map">
+            <a
+              href="https://geohub.lacity.org/datasets/lahub::la-city-council-districts-adopted-2021/about"
+              target="_blank"
+              rel="noopener noreferrer"
+            >LA City Council map</a>
+            — Los Angeles City Council districts adopted in 2021, Ordinance 187279, effective 10 December 2021, Bureau of Engineering.
+          </li>
+          <li data-source="Census data">
+            <a
+              href="https://data.census.gov/all"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Census data</a>
+            — U.S. Census Bureau, 2020 Census Redistricting Data (P.L. 94-171), total population for city rates. Council-district populations are the city-adjusted counts in Attachment A, not raw Census counts.
+          </li>
+          <li data-source="Boundaries">
+            <a
+              href="https://public.gis.lacounty.gov/public/rest/services/LACounty_Dynamic/Political_Boundaries/MapServer"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Boundaries</a>
+            — City limits for cities within Los Angeles County, and Los Angeles County school-district areas, from Los Angeles County GIS Political Boundaries.
+          </li>
+          <li data-source="PVZ Crosswalks">
+            <a
+              href="https://peoplesvisionzero.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >PVZ Crosswalks</a>
+            — People's Vision Zero records of crosswalks painted.
+          </li>
+          <li data-source="Schools">
+            <a
+              href="https://arcgis.gis.lacounty.gov/arcgis/rest/services/LACounty_Dynamic/Infrastructure/MapServer/2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Schools</a>
+            — LA County GIS TK-12 campus polygons (Infrastructure MapServer layer 2, Schools). Open public and charter names from
+            <a
+              href="https://services3.arcgis.com/fdvHcZVgB2QSRNkL/arcgis/rest/services/SchoolSites2526/FeatureServer/0"
+              target="_blank"
+              rel="noopener noreferrer"
+            >California Public Schools 2025-26</a>.
+          </li>
+          <li data-source="Parks">
+            <a
+              href="https://data.lacity.org/Parks-Recreation/Parks/4jt3-efvk"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Parks</a>
+            — City of Los Angeles Department of Recreation and Parks park boundaries.
+          </li>
+          <li data-source="HIN (2024)">
+            <a
+              href="https://maps.lacity.org/arcgis/rest/services/Mapping/NavigateLA/MapServer/172"
+              target="_blank"
+              rel="noopener noreferrer"
+            >HIN (2024)</a>
+            — LADOT High Injury Network (2024), NavigateLA layer 172.
+          </li>
+          <li data-source="Safety Corridors (2024)">
+            <a
+              href="https://maps.lacity.org/arcgis/rest/services/Mapping/NavigateLA/MapServer/173"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Safety Corridors (2024)</a>
+            — LADOT Safety Corridors (2024), NavigateLA layer 173.
+          </li>
+          <li data-source="Mobility Plan 2035">
+            <a
+              href="https://services1.arcgis.com/tp9wqSVX1AitKgjd/arcgis/rest/services/HLA_Dashboard_Web_Map_Live/FeatureServer/4"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Mobility Plan 2035</a>
+            — LADOT Mobility Plan 2035 networks (HLA Dashboard Web Map Live layer 4).
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <div id="map" role="application" aria-label="Los Angeles City Council districts"></div>
+  </div>
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="vendor/polygon-clipping/polygon-clipping.umd.min.js"></script>
+  <script src="choropleth.js"></script>
+  <script src="place_selection.js?v=place-row-actions-4"></script>
+  <script src="corner_count.js"></script>
+  <script src="school_list.js?v=cd-label-1"></script>
+  <script src="park_list.js?v=park-cd-label-1"></script>
+  <script src="source_lines.js?v=source-flags-1"></script>
+  <script src="app.js?v=source-flags-1"></script>
+</body>
+</html>
